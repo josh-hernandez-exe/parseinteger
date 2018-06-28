@@ -100,7 +100,24 @@ class Integer(_BASE_CLASS):
 
         cur_integer = 0
         base_pow = 1
+        temp_large_digit = None
         for char in reversed(string):
+
+            # Remember that we are parsing the string in reverse
+            if isinstance(temp_large_digit, list) and char == "<":
+                # End tracking a large base digit
+                temp_large_digit.append(char)
+                char = "".join(reversed(temp_large_digit))
+                temp_large_digit = None
+
+            elif char == ">" or isinstance(temp_large_digit, list):
+                # Start tracking a large base digit
+                if temp_large_digit is None:
+                    temp_large_digit = list()
+
+                temp_large_digit.append(char)
+                continue
+
             if char not in mapping: raise StringNotMappedException()
             cur_integer += base_pow * mapping[char]
             base_pow *= radix
